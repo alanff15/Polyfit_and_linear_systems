@@ -1,4 +1,4 @@
-#include "sislinmmq.h"
+#include "linsysmmq.h"
 
 #define MOD(EXP) ( (EXP)<0?-(EXP):(EXP) )
 
@@ -10,13 +10,13 @@ double Pow(double a, int b) {
     return resp;
 }
 
-int SisLin(double *x, double *Ab, int n) {
+int linsys(double *x, double *Ab, int n) {
     if (n < 1) {
         return 1;
     }
-    int ret = 0, Abw = n + 1;
+    int ret = 1, Abw = n + 1;
     double aux;
-    /*construir triangulo de 0's*/
+    /*escalonar equações*/
     for (int l, k, i, j = 0; j < n - 1; j++) //varrer matriz da esquerda pra direita
     {
         //ordenar linhas pela coluna j, crescente de cima pra baixo,
@@ -70,8 +70,8 @@ int SisLin(double *x, double *Ab, int n) {
     for (int i = 1; i < n; i++) {
         aux *= Ab[i * Abw + i];
     }
-    if (MOD(aux) < DET_VALOR_MIN) {
-        ret = 1;
+    if (MOD(aux) < DET_VAL_MIN) {
+        ret = 0;
     }
     /*resolver sistema triangular superior*/
     for (int j, i = n - 1; i >= 0; i--) {
@@ -84,7 +84,7 @@ int SisLin(double *x, double *Ab, int n) {
     return ret;
 }
 
-int Mmq(double *a, double *yx, int m, int n, int o) {
+int polyfit(double *a, double *yx, int m, int n, int o) {
     /*
     Resolver o sistema linear A.a=b
      */
@@ -160,7 +160,7 @@ int Mmq(double *a, double *yx, int m, int n, int o) {
     }
 
     /*resolver sistema*/
-    ret = SisLin(a, Ab, tam);
+    ret = linsys(a, Ab, tam);
 
 #if (PARAMS_MAX_MEM_ALOC == 0)
     //liberar memória do sistema linear
@@ -169,7 +169,7 @@ int Mmq(double *a, double *yx, int m, int n, int o) {
     return ret;
 }
 
-double Erro(double *yx, int m, int n, int o, double *a) {
+double polyfit_err(double *yx, int m, int n, int o, double *a) {
     double aux, err = 0;
     int k, j, i, c;
     int yxw = m + 1;
